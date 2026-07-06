@@ -170,24 +170,47 @@ export const sendVerifyOtp = async (req, res, next) => {
     await user.save();
 
     try {
-      await sendOtpEmail(
+      const result = await sendOtpEmail(
         user.email,
         otp,
         "Verify your account",
         `Your verification code is ${otp}. It expires in 15 minutes.`
       );
+      const response = { success: true, message: "Verification OTP sent to your email!" };
+      if (result && !result.sent && process.env.NODE_ENV !== 'production') response.otp = result.otp;
+      return res.status(200).json(response);
     } catch (mailError) {
       console.error("Mail send failed:", mailError);
+      const response = { success: true, message: "Verification OTP saved (mail send failed)." };
+      if (process.env.NODE_ENV !== 'production') response.otp = otp;
+      return res.status(200).json(response);
     }
-
-    return res.status(200).json({
-      success: true,
-      message: "Verification OTP sent to your email!",
-    });
   } catch (error) {
     next(error);
   }
 };
+
+export const verifyEmailPublic = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return sendError(res, 400, 'Missing email or OTP');
+
+    const user = await User.findOne({ email });
+    if (!user) return sendError(res, 404, 'User not found');
+
+    if (user.verifyOtp === '' || user.verifyOtp !== otp) return sendError(res, 400, 'Invalid OTP code');
+    if (user.verifyOtpExpireAt < Date.now()) return sendError(res, 400, 'OTP has expired. Please request a new one.');
+
+    user.isAccountVerified = true;
+    user.verifyOtp = '';
+    user.verifyOtpExpireAt = 0;
+    await user.save();
+
+    return res.status(200).json({ success: true, message: 'Email verified successfully!' });
+  } catch (err) {
+    next(err);
+  }
+}
 
 export const verifyEmail = async (req, res, next) => {
   try {

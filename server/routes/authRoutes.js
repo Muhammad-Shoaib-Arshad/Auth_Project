@@ -20,6 +20,7 @@ authRouter.post("/logout", logout);
 authRouter.get("/me", protect, getMe);
 authRouter.post("/send-verify-otp", protect, sendVerifyOtp);
 authRouter.post("/verify-email", protect, verifyEmail);
+authRouter.post('/verify-email-public', verifyEmailPublic);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password", resetPassword);
 

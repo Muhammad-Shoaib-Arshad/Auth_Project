@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { sendVerify, verify } from '../api'
+import { sendVerify, verify, verifyPublic } from '../api'
+import { useEffect } from 'react'
 import AuthShell from '../components/AuthShell'
 import Toast from '../components/Toast'
 
@@ -51,6 +52,28 @@ export default function Verify() {
       setToast({ type: 'error', msg: body?.message || 'Verification failed.' })
     }
   }
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const qEmail = params.get('email')
+      const qOtp = params.get('otp')
+      if (qEmail && qOtp) {
+        (async () => {
+          setToast(null)
+          setLoading(true)
+          const { body } = await verifyPublic({ email: qEmail, otp: qOtp })
+          setLoading(false)
+          if (body?.success) {
+            setToast({ type: 'success', msg: 'Email verified! Redirecting…' })
+            setTimeout(() => navigate('/dashboard'), 1500)
+          } else {
+            setToast({ type: 'error', msg: body?.message || 'Verification failed.' })
+          }
+        })()
+      }
+    } catch (e) { /* ignore */ }
+  }, [])
 
   return (
     <AuthShell title="Verify Email" subtitle="Enter the 6-digit code sent to your email.">

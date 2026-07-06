@@ -23,6 +23,7 @@ export const logout = () => request('/api/auth/logout', { method: 'POST' })
 export const me = () => request('/api/auth/me')
 export const sendVerify = () => request('/api/auth/send-verify-otp', { method: 'POST' })
 export const verify = (payload) => request('/api/auth/verify-email', { method: 'POST', body: JSON.stringify(payload) })
+export const verifyPublic = (payload) => request('/api/auth/verify-email-public', { method: 'POST', body: JSON.stringify(payload) })
 export const forgot = (payload) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(payload) })
 export const reset = (payload) => request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(payload) })
 
