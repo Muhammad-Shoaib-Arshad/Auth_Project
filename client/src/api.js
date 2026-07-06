@@ -1,5 +1,11 @@
-// Empty string = relative URL → proxied through Vite to http://localhost:5000
-const API_BASE = ''
+// During development, Vite proxy can sometimes behave unexpectedly when using 127.0.0.1.
+// Use direct backend origin when running the frontend on port 5173 to avoid proxy issues.
+let API_BASE = ''
+try {
+  if (typeof window !== 'undefined' && window.location && window.location.port === '5173') {
+    API_BASE = 'http://127.0.0.1:5000'
+  }
+} catch (e) { /* ignore */ }
 
 async function request(path, opts = {}) {
   try {
