@@ -18,12 +18,16 @@ export default function Login() {
     setToast(null)
     
     try {
-      const { body } = await login(form)
+      // trim email to avoid accidental whitespace
+      const payload = { ...form, email: (form.email || '').trim() }
+      const { body, status } = await login(payload)
+      console.log('login response', status, body)
       if (body?.success) {
         setToast({ type: 'success', msg: 'Welcome back! Redirecting...' })
         setTimeout(() => navigate('/dashboard'), 1200)
       } else {
         setToast({ type: 'error', msg: body?.message || 'Login failed.' })
+        console.error('Login failed response:', body)
       }
     } catch (err) {
       setToast({ type: 'error', msg: 'Network error — cannot reach backend.' })
