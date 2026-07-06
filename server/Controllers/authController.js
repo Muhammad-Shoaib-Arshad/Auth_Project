@@ -23,7 +23,8 @@ const sendOtpEmail = async (email, otp, subject, text) => {
 
   if (!isConfigured) {
     console.log(`Email service not configured. OTP for ${email}: ${otp}`);
-    return;
+    // In development, return the OTP so controllers can surface it for local testing
+    return { sent: false, otp };
   }
 
   const mailOptions = {
@@ -34,6 +35,7 @@ const sendOtpEmail = async (email, otp, subject, text) => {
   };
 
   await transporter.sendMail(mailOptions);
+  return { sent: true };
 };
 
 export const register = async (req, res, next) => {
@@ -238,20 +240,26 @@ export const forgotPassword = async (req, res, next) => {
     await user.save();
 
     try {
-      await sendOtpEmail(
+      const result = await sendOtpEmail(
         user.email,
         otp,
         "Reset your password",
         `Your password reset code is ${otp}. It expires in 15 minutes.`
       );
+
+      const response = { success: true, message: "Password reset code sent to your email!" };
+      // For local development when email isn't configured, include the OTP in the response
+      if (result && !result.sent && process.env.NODE_ENV !== 'production') {
+        response.otp = result.otp;
+      }
+
+      return res.status(200).json(response);
     } catch (mailError) {
       console.error("Mail send failed:", mailError);
+      const response = { success: true, message: "Password reset code saved (mail send failed)." };
+      if (process.env.NODE_ENV !== 'production') response.otp = otp;
+      return res.status(200).json(response);
     }
-
-    return res.status(200).json({
-      success: true,
-      message: "Password reset code sent to your email!",
-    });
   } catch (error) {
     next(error);
   }
@@ -288,3 +296,16 @@ export const resetPassword = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getDevResetOtp = async (req, res, next) => {
+  try {
+    if (process.env.NODE_ENV === 'production') return sendError(res, 404, 'Not found')
+    const { email } = req.query
+    if (!email) return sendError(res, 400, 'Missing email')
+    const user = await User.findOne({ email })
+    if (!user) return sendError(res, 404, 'User not found')
+    return res.status(200).json({ success: true, otp: user.resetOtp })
+  } catch (err) {
+    next(err)
+  }
+}

@@ -22,9 +22,9 @@ export default function BgCanvas() {
 
     // Create floating orbs
     const orbDefs = [
-      { x: 0.15, y: 0.25, r: 280, color: [79, 142, 255] },
-      { x: 0.85, y: 0.65, r: 220, color: [162, 89, 255] },
-      { x: 0.5,  y: 0.85, r: 180, color: [79, 142, 255] },
+      { x: 0.12, y: 0.25, r: 320, color: [168, 184, 74] },
+      { x: 0.78, y: 0.6,  r: 220, color: [112, 130, 58] },
+      { x: 0.45, y: 0.85, r: 180, color: [98, 128, 90] },
     ]
     orbDefs.forEach(d => orbs.push({
       ...d, vx: (Math.random()-0.5)*0.12, vy: (Math.random()-0.5)*0.12,

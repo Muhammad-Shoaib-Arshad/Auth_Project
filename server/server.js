@@ -18,13 +18,23 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "http://localhost:3001",
   "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001",
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, cb) => {
-      // allow non-browser tools (Postman, curl) and allowed origins
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+      // allow non-browser tools (Postman, curl)
+      if (!origin) return cb(null, true);
+
+      // allow explicitly listed origins
+      if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+
+      // allow localhost / 127.0.0.1 on dev ports for convenience
+      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) return cb(null, true);
+
       cb(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,

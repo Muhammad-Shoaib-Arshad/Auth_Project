@@ -33,7 +33,7 @@ export default function Login() {
   }
 
   return (
-    <AuthShell title="Welcome Back" subtitle="Sign in to your NEXUS account.">
+    <AuthShell title="Welcome Back" subtitle="Sign in to LEO.">
       {toast && <Toast type={toast.type} msg={toast.msg} />}
 
       <form onSubmit={submit} autoComplete="off">
@@ -42,7 +42,12 @@ export default function Login() {
           <div className="input-wrap">
             <input id="login-email" className="form-input" type="email" placeholder="john@example.com"
               value={form.email} onChange={set('email')} required />
-            <span className="input-icon">✉</span>
+            <span className="input-icon" aria-hidden>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6.5V18a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M21 6.5l-9 6-9-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
           </div>
         </div>
 
@@ -51,7 +56,12 @@ export default function Login() {
           <div className="input-wrap">
             <input id="login-password" className="form-input" type="password" placeholder="Enter password"
               value={form.password} onChange={set('password')} required />
-            <span className="input-icon">🔒</span>
+            <span className="input-icon" aria-hidden>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.4" />
+                <path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
           </div>
         </div>
         

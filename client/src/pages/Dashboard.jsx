@@ -56,7 +56,18 @@ export default function Dashboard() {
 
         <header className="dash-header" ref={headerRef}>
           <div className="dash-nav-brand">
-            <span style={{ fontSize: 22 }}>⬡</span> NEXUS
+            <span style={{ fontSize: 22, display: 'inline-flex', alignItems: 'center' }}>
+              <svg viewBox="0 0 24 24" width="20" height="20" style={{ marginRight: 8 }} xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="g2" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0" stopColor="#4f8eff" />
+                    <stop offset="1" stopColor="#a259ff" />
+                  </linearGradient>
+                </defs>
+                <rect x="1" y="2" width="22" height="20" rx="5" fill="url(#g2)" />
+              </svg>
+            </span>
+            LEO
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             {!user.isAccountVerified && (
@@ -75,7 +86,7 @@ export default function Dashboard() {
             <h1 className="dash-welcome">
               Hello, <span>{user.name?.split(' ')[0] || 'User'}</span> 👋
             </h1>
-            <p className="dash-sub">Your NEXUS account is active and secured.</p>
+            <p className="dash-sub">Your LEO account is active and secured.</p>
           </div>
 
           <div className="stats-grid">
